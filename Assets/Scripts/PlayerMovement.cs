@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
     private const string Horizontal = nameof(Horizontal);
     private const string Vertical = nameof(Vertical);
 
+    [SerializeField] private SavePlayerPosition _playerPosition;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private Collider2D _boundaryCollider;
 
@@ -13,34 +14,40 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private Animator _animation;
 
-    private float leftLimit;
-    private float rightLimit;
-    private float upperLimit;
-    private float bottomLimit;
+    private Vector2 _boundaryCenter;
+    private float _boundaryRadius;
+    private Vector2 _boundarySize;
 
-    public void Start()
+    private void Start()
     {
+        if (SceneManager.GetActiveScene().buildIndex == 0)
+        {
+            transform.position = _playerPosition.GetPlayerPosition();
+        }
         _animation = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _characterSprite = GetComponentInChildren<SpriteRenderer>();
 
         Vector3 newPositon = transform.position;
 
-        if (SceneManager.GetActiveScene().buildIndex != 2)
-        {
-            newPositon.y = PlayerPrefs.GetFloat("PlayerPositionY");
-        }
-
         transform.position = newPositon;
 
         if (_boundaryCollider != null)
         {
-            Bounds bounds = _boundaryCollider.bounds;
-
-            leftLimit = bounds.min.x;
-            rightLimit = bounds.max.x;
-            bottomLimit = bounds.min.y;
-            upperLimit = bounds.max.y;
+            if (_boundaryCollider is CircleCollider2D circleCollider)
+            {
+                _boundaryCenter = circleCollider.transform.position;
+                _boundaryRadius = circleCollider.radius * Mathf.Max(circleCollider.transform.localScale.x, circleCollider.transform.localScale.y);
+            }
+            else if (_boundaryCollider is BoxCollider2D boxCollider)
+            {
+                _boundaryCenter = boxCollider.transform.position;
+                _boundarySize = boxCollider.size * (Vector2)boxCollider.transform.localScale;
+            }
+            else
+            {
+                Debug.LogError("Unsupported Collider type!");
+            }
         }
         else
         {
@@ -58,22 +65,36 @@ public class PlayerMovement : MonoBehaviour
         float verticalInput = Input.GetAxis(Vertical);
         float horizontalInput = Input.GetAxis(Horizontal);
 
-        Vector3 movement = new Vector3(horizontalInput, verticalInput, 0f).normalized;
+        Vector2 movement = new Vector2(horizontalInput, verticalInput).normalized;
+        Vector2 newPosition = (Vector2)transform.position + movement * _moveSpeed * Time.deltaTime;
 
-        transform.Translate(movement * _moveSpeed * Time.deltaTime, Space.World);
-
-        transform.position = new Vector3
-        (
-            Mathf.Clamp(transform.position.x, leftLimit, rightLimit),
-            Mathf.Clamp(transform.position.y, bottomLimit, upperLimit),
-            transform.position.z
-        );
+        if (_boundaryCollider is CircleCollider2D)
+        {
+            if (Vector2.Distance(newPosition, _boundaryCenter) <= _boundaryRadius)
+            {
+                transform.position = new Vector3(newPosition.x, newPosition.y, transform.position.z);
+            }
+            else
+            {
+                Vector2 direction = (newPosition - _boundaryCenter).normalized;
+                Vector2 clampedPosition = _boundaryCenter + direction * _boundaryRadius;
+                transform.position = new Vector3(clampedPosition.x, clampedPosition.y, transform.position.z);
+            }
+        }
+        else if (_boundaryCollider is BoxCollider2D)
+        {
+            Vector2 halfSize = _boundarySize / 2;
+            Vector2 clampedPosition = new Vector2(
+                Mathf.Clamp(newPosition.x, _boundaryCenter.x - halfSize.x, _boundaryCenter.x + halfSize.x),
+                Mathf.Clamp(newPosition.y, _boundaryCenter.y - halfSize.y, _boundaryCenter.y + halfSize.y)
+            );
+            transform.position = new Vector3(clampedPosition.x, clampedPosition.y, transform.position.z);
+        }
 
         _animation.SetFloat("Horizontal", horizontalInput);
         _animation.SetFloat("Vertical", verticalInput);
         _animation.SetFloat("Speed", movement.sqrMagnitude);
 
-        // Поворачиваем спрайт в зависимости от направления движения
         if (horizontalInput != 0)
         {
             _characterSprite.flipX = horizontalInput > 0;
