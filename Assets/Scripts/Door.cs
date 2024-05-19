@@ -14,10 +14,6 @@ public class Door : MonoBehaviour
         {
             _playerInTrigger = true;
         }
-        else if (collision.gameObject.CompareTag("Spotlight"))
-        {
-            PlayerPrefs.SetInt("LightInHouse", 1);
-        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -25,10 +21,6 @@ public class Door : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             _playerInTrigger = false;
-        }
-        else if (collision.gameObject.CompareTag("Spotlight")) 
-        {
-            PlayerPrefs.SetInt("LightInHouse", 0);
         }
     }
 

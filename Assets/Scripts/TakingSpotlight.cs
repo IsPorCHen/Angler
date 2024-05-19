@@ -4,28 +4,26 @@ using UnityEngine;
 
 public class TakingSpotlight : MonoBehaviour
 {
-    [SerializeField] private GameObject player; // Ссылка на игрока
+    [SerializeField] private GameObject player;
     private bool isFollowing = false;
     private bool playerInRange = false;
 
-    private Vector3 offset; // Смещение для сохранения относительного положения прожектора
+    private Vector3 offset; 
 
     private void Update()
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.F))
         {
-            isFollowing = !isFollowing; // Переключаем состояние следования
+            isFollowing = !isFollowing; 
 
             if (isFollowing)
             {
-                // Сохраняем текущее смещение прожектора относительно игрока
                 offset = transform.position - player.transform.position;
             }
         }
 
         if (isFollowing && player != null)
         {
-            // Обновляем позицию прожектора относительно игрока с учетом смещения
             transform.position = player.transform.position + offset;
         }
     }
@@ -34,7 +32,7 @@ public class TakingSpotlight : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            player = other.gameObject; // Сохраняем ссылку на игрока при входе в зону света
+            player = other.gameObject;
             playerInRange = true;
         }
     }
@@ -43,7 +41,7 @@ public class TakingSpotlight : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            playerInRange = false; // Устанавливаем, что игрок вышел из зоны света
+            playerInRange = false;
         }
     }
 }

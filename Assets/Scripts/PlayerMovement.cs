@@ -9,6 +9,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private SavePlayerPosition _playerPosition;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private Collider2D _boundaryCollider;
+    [SerializeField] private Sprite idleHorizontalSprite; // Спрайт для направлений влево и вправо
+    [SerializeField] private Sprite idleUpSprite; // Спрайт для направления вверх
+    [SerializeField] private Sprite idleDownSprite; // Спрайт для направления вниз
 
     private SpriteRenderer _characterSprite;
     private Rigidbody2D _rigidbody;
@@ -18,12 +21,15 @@ public class PlayerMovement : MonoBehaviour
     private float _boundaryRadius;
     private Vector2 _boundarySize;
 
+    private Vector2 _lastDirection; // Последнее направление движения
+
     private void Start()
     {
         if (SceneManager.GetActiveScene().buildIndex == 0)
         {
             transform.position = _playerPosition.GetPlayerPosition();
         }
+
         _animation = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _characterSprite = GetComponentInChildren<SpriteRenderer>();
@@ -98,6 +104,31 @@ public class PlayerMovement : MonoBehaviour
         if (horizontalInput != 0)
         {
             _characterSprite.flipX = horizontalInput > 0;
+        }
+
+        if (movement.sqrMagnitude > 0)
+        {
+            _lastDirection = movement; // Обновляем последнее направление движения
+            _animation.enabled = true;
+        }
+        else
+        {
+            _animation.enabled = false;
+            SetIdleSprite();
+        }
+    }
+
+    private void SetIdleSprite()
+    {
+        // Устанавливаем спрайт покоя в зависимости от последнего направления движения
+        if (Mathf.Abs(_lastDirection.x) > Mathf.Abs(_lastDirection.y))
+        {
+            _characterSprite.sprite = idleHorizontalSprite;
+            _characterSprite.flipX = _lastDirection.x > 0; // Переворачиваем спрайт влево
+        }
+        else
+        {
+            _characterSprite.sprite = _lastDirection.y > 0 ? idleUpSprite : idleDownSprite;
         }
     }
 }

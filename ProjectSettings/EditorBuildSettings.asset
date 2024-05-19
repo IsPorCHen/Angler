@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Scene.unity
+    path: Assets/Scenes/Moon.unity
     guid: dc5d57f6e7131384e8d209deb50ab45e
   - enabled: 1
     path: Assets/Scenes/House 1.unity

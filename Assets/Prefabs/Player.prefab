@@ -52,6 +52,9 @@ MonoBehaviour:
   _playerPosition: {fileID: 11400000, guid: 3ecb355728dc95d47af1053e2572ca08, type: 2}
   _moveSpeed: 3
   _boundaryCollider: {fileID: 0}
+  idleHorizontalSprite: {fileID: -1405687238, guid: a61aeaffbdc389446afb2616aee65730, type: 3}
+  idleUpSprite: {fileID: -1605806748, guid: a61aeaffbdc389446afb2616aee65730, type: 3}
+  idleDownSprite: {fileID: 277213228, guid: a61aeaffbdc389446afb2616aee65730, type: 3}
 --- !u!212 &6081639014845707362
 SpriteRenderer:
   m_ObjectHideFlags: 0
