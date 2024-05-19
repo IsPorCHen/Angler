@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Spotlight
   - ActivationPlate
+  - Switch
   layers:
   - Default
   - TransparentFX

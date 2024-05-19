@@ -9,9 +9,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private SavePlayerPosition _playerPosition;
     [SerializeField] private float _moveSpeed;
     [SerializeField] private Collider2D _boundaryCollider;
-    [SerializeField] private Sprite idleHorizontalSprite; // Спрайт для направлений влево и вправо
-    [SerializeField] private Sprite idleUpSprite; // Спрайт для направления вверх
-    [SerializeField] private Sprite idleDownSprite; // Спрайт для направления вниз
+    [SerializeField] private Sprite idleHorizontalSprite;
+    [SerializeField] private Sprite idleUpSprite;
+    [SerializeField] private Sprite idleDownSprite;
+    [SerializeField] private AudioSource _audioSource = null;
 
     private SpriteRenderer _characterSprite;
     private Rigidbody2D _rigidbody;
@@ -21,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     private float _boundaryRadius;
     private Vector2 _boundarySize;
 
-    private Vector2 _lastDirection; // Последнее направление движения
+    private Vector2 _lastDirection;
 
     private void Start()
     {
@@ -116,6 +117,18 @@ public class PlayerMovement : MonoBehaviour
             _animation.enabled = false;
             SetIdleSprite();
         }
+
+        if (_audioSource != null)
+        {
+            if (movement.sqrMagnitude > 0 && !_audioSource.isPlaying)
+            {
+                _audioSource.Play();
+            }
+            else if (movement.sqrMagnitude <= 0 && _audioSource.isPlaying)
+            {
+                _audioSource.Stop();
+            }
+        }
     }
 
     private void SetIdleSprite()
@@ -131,4 +144,6 @@ public class PlayerMovement : MonoBehaviour
             _characterSprite.sprite = _lastDirection.y > 0 ? idleUpSprite : idleDownSprite;
         }
     }
+
+
 }

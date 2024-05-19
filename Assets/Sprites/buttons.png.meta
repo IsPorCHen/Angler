@@ -100,10 +100,10 @@ TextureImporter:
       name: buttons_0
       rect:
         serializedVersion: 2
-        x: 25
-        y: 25
-        width: 1000
-        height: 200
+        x: 13
+        y: 18
+        width: 49
+        height: 9
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -121,10 +121,10 @@ TextureImporter:
       name: buttons_1
       rect:
         serializedVersion: 2
-        x: 1075
-        y: 25
-        width: 1000
-        height: 200
+        x: 12
+        y: 2
+        width: 57
+        height: 14
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
